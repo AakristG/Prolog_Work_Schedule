@@ -13,3 +13,9 @@ I have made a lot of progress on schduler.pl document which is the main prolog f
 
 # May 5th 11:19 pm
 I followed the structure that I created before and coded the rest of the code. I will be testing the code with inputs and compare it to the given outputs tomorrow.
+
+# May 6th 10:23 pm
+I didn't have much time to work on the project today due to final exams. I have tested with example input 1 and testing.pl file that was provided and it was successfull.
+
+# May 7th 9:07 pm
+I have tested with inputs 2 and 3, which have produced the same outputs as example outputs given in the text files. I just need to review all of my changes before I submit the final project. I also forgot to explain the helper predicates I implemented to support the main plan/1 predicate. fill_assignment/4 assigns each employee to one active workstation by iterating through the employee list and using member/2 to non-deterministically pick a workstation while also checking avoid_workstation constraints at the same time. add_to_bucket/4 handles the bookkeeping of adding an employee to a workstation's bucket in the assignment map. check_counts/2 verifies that every workstation's final headcount falls within its defined minimum and maximum after all employees have been placed. pairs_to_schedule/2 converts the internal assignment map into the final list of workstation/2 terms, dropping any workstation that ended up with no employees. I will finish the rest of the testing tomorrow.

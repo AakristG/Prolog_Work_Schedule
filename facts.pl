@@ -5,9 +5,9 @@ employee(dave).
 employee(eve).
 employee(frank).
 
-workstation(reception,  1, 2).
-workstation(kitchen,    2, 3).
-workstation(warehouse,  1, 2).
+workstation(reception, 1, 2).
+workstation(kitchen, 2, 3).
+workstation(warehouse, 1, 2).
 
 workstation_idle(warehouse, night).
 

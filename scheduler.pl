@@ -1,14 +1,13 @@
 plan(plan(Morning, Evening, Night)) :-
-    findall(E,            employee(E),            Employees),
-    findall(ws(W,Min,Max), workstation(W,Min,Max), AllWS),
+    findall(E, employee(E), Employees),
+    findall(ws(W,Min,Max), workstation(W,Min,Max), AllWorkSchedules),
 
     % Split employees across the three shifts (constraint 6).
-    assign_shifts(Employees, MorningEmps, EveningEmps, NightEmps),
+    assign_shifts(Employees, MorningEmployees, EveningEmployees, NightEmployees),
 
-    build_shift(morning, MorningEmps, AllWS, Morning),
-    build_shift(evening, EveningEmps, AllWS, Evening),
-    build_shift(night,   NightEmps,   AllWS, Night).
-
+    build_shift(morning, MorningEmployees, AllWorkSchedules, Morning),
+    build_shift(evening, EveningEmployees, AllWorkSchedules, Evening),
+    build_shift(night, NightEmployees, AllWorkSchedules, Night).
 
 assign_shifts([], [], [], []).
 
@@ -25,18 +24,18 @@ assign_shifts([E|Rest], Morning, Evening, [E|Night]) :-
     assign_shifts(Rest, Morning, Evening, Night).
 
 
-build_shift(Shift, Employees, AllWS, Schedule) :-
+build_shift(Shift, Employees, AllWorkSchedules, Schedule) :-
     % keep only non-idle workstations.
-    include(ws_active(Shift), AllWS, ActiveWS),
+    include(ws_active(Shift), AllWorkSchedules, ActiveWorkSchedules),
 
-    % empty assignment map.
-    maplist(ws_to_pair, ActiveWS, EmptyAssign),
+    % empty assignment map
+    maplist(ws_to_pair, ActiveWorkSchedules, EmptyAssign),
 
     % assign all employees
-    fill_assignment(Employees, ActiveWS, EmptyAssign, FullAssign),
+    fill_assignment(Employees, ActiveWorkSchedules, EmptyAssign, FullAssign),
 
     % verify headcounts.
-    check_counts(FullAssign, ActiveWS),
+    check_counts(FullAssign, ActiveWorkSchedules),
 
     % build the schedule term.
     pairs_to_schedule(FullAssign, Schedule).
@@ -47,12 +46,12 @@ ws_active(Shift, ws(W,_,_)) :-
 ws_to_pair(ws(W,_,_), W-[]).
 
 
-fill_assignment([], _ActiveWS, Assign, Assign).
+fill_assignment([], _ActiveWorkSchedules, Assign, Assign).
 
-fill_assignment([E|Rest], ActiveWS, Assign0, Assign) :-
+fill_assignment([E|Rest], ActiveWorkSchedules, Assign0, Assign) :-
 
     % Pick a workstation for this employee
-    member(ws(W,_,_), ActiveWS),
+    member(ws(W,_,_), ActiveWorkSchedules),
 
     % Constraint 5: skip workstations the employee must avoid.
     \+ avoid_workstation(E, W),
@@ -61,23 +60,23 @@ fill_assignment([E|Rest], ActiveWS, Assign0, Assign) :-
     add_to_bucket(W, E, Assign0, Assign1),
 
     % Continue with the remaining employees.
-    fill_assignment(Rest, ActiveWS, Assign1, Assign).
+    fill_assignment(Rest, ActiveWorkSchedules, Assign1, Assign).
 
 add_to_bucket(W, E, [W-Es | T], [W-[E|Es] | T]) :- !.
 add_to_bucket(W, E, [H     | T], [H        | T1]) :-
     add_to_bucket(W, E, T, T1).
 
 check_counts([], _).
-check_counts([W-Es | RestA], ActiveWS) :-
-    member(ws(W, Min, Max), ActiveWS),
+check_counts([W-Es | RestA], ActiveWorkSchedules) :-
+    member(ws(W, Min, Max), ActiveWorkSchedules),
     length(Es, Count),
     Count >= Min,
     Count =< Max,
-    check_counts(RestA, ActiveWS).
+    check_counts(RestA, ActiveWorkSchedules).
 
 pairs_to_schedule([], []).
-pairs_to_schedule([_-[] | Rest], Sched) :-
+pairs_to_schedule([_-[] | Rest], Schedules) :-
     !,
-    pairs_to_schedule(Rest, Sched).
-pairs_to_schedule([W-Es | Rest], [workstation(W, Es) | Sched]) :-
-    pairs_to_schedule(Rest, Sched).
+    pairs_to_schedule(Rest, Schedules).
+pairs_to_schedule([W-Es | Rest], [workstation(W, Es) | Schedules]) :-
+    pairs_to_schedule(Rest, Schedules).
