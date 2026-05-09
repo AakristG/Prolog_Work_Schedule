@@ -7,7 +7,7 @@ In VS Code terminal, run:
 - consult('scheduler.pl').
 - consult('testingFileName.pl').
 
-Then run commands:
+Then run commands, for example:
 - Plan(P).
 
 Then it should give you a result.
