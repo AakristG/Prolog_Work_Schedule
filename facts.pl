@@ -14,5 +14,5 @@ workstation_idle(warehouse, night).
 avoid_shift(alice, night).            
 avoid_shift(frank, morning).       
 
-avoid_workstation(bob,   kitchen).   
+avoid_workstation(bob, kitchen).   
 avoid_workstation(carol, warehouse).  
